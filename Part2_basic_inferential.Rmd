@@ -1,0 +1,145 @@
+---
+title: 'Basic Inferential Data Analysis Instructions: Comparing tooth growth by dose
+  and supp'
+author: "Jae Kwon"
+date: "March 3, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Overview
+Analysis of the ToothGrowth data in the R datasets package. Some basic exploratory data analyses are performed, and confidence interval and hypothesis test were done to compare tooth growth by supp and dose.
+
+
+# Basic Summary of Data
+**Load the data and see a quick summary of it: **  
+```{r}
+data("ToothGrowth")
+tg <- ToothGrowth
+```
+
+```{r, warning=F, fig.width: 3, fig.height= 3}
+library(ggplot2)
+
+ggplot(tg, aes(x = factor(dose), y = len, fill = supp)) +
+       facet_grid(.~supp) + geom_boxplot(show_guide=FALSE) +
+       xlab('Dose') + ylab('Tooth Length') + 
+       ggtitle('Tooth Length by Dosage for Each Type of Supplement')
+```
+
+<br> <br>
+
+# Confidence Intervals & Hypothesis Test
+
+### By Supplement Type:  
+##### **Hypothesis Test #1:**  
+**Null hypothesis:** The two supplements result same tooth growth disregard the dosage.  
+```{r}
+# by supplement type
+hyp_test <- t.test(len ~ supp, data =tg)
+c.int <- hyp_test$conf.int
+pval <- hyp_test$p.value
+```
+
+**Confidence Interval** with significance value of 0.05:
+```{r}
+c.int
+```
+
+**p-value** is:
+```{r}
+pval
+```
+
+Since the p-value of 0.061 is larger than the significance value of 0.05, we fail to reject the null hypothesis. There is no strong evidence that the length of tooth is affected by the type of supplement. The average difference in tooth length across the two supplement types is close to 0.  
+
+If we assume that the difference is 0, it falls into the confidence interval.   
+
+<br> 
+
+### By Dose Level:  
+
+#####**Hypothesis Test #2: ** 
+**Null hypothesis:** For the dosage of 0.5 mg/day, the two supplements result same tooth growth.
+
+```{r}
+htest1 <- t.test(len ~ supp, data = subset(tg, dose == 0.5))
+```
+
+**Confidence Interval:**  
+```{r}
+c.int1 <- htest1$conf.int
+c.int1
+```
+
+**P-value:**  
+```{r}
+pval1 <- htest1$p.value
+pval1
+```
+
+Since P-value is less than the significant level of 0.05, we reject the null hypothesis. In addition, the confidence interval does not include 0 that there is a difference in tooth growth length. OJ with dosage of 0.5 mg/day has greater effect on the tooth growth.  
+
+
+
+##### **Hypothesis Test #3:**
+**Null hypothesis:** For the dosage of 1.0 mg/day, the two supplements result same tooth groowth.
+
+```{r}
+htest2 <- t.test(len ~ supp, data = subset(tg, dose == 1))
+```
+
+**Confidence Interval:**  
+```{r}
+c.int2 <- htest2$conf.int
+c.int2
+```
+
+**P-value:**  
+```{r}
+pval2 <- htest2$p.value
+pval2
+```
+
+Since P-value is less than the significant level of 0.05, we reject the null hypothesis. In addition, the confidence interval does not include 0 that there is a difference in tooth growth length. OJ with dosage of 1.0 mg/day has greater effect on the tooth growth.  
+
+
+
+##### **Hypothesis Test #4:**
+**Null hypothesis:** For the dosage of 2.0 mg/day, the two supplements result same tooth groowth.
+
+```{r}
+htest3 <- t.test(len ~ supp, data = subset(tg, dose == 2.0))
+```
+
+**Confidence Interval:**  
+```{r}
+c.int3 <- htest3$conf.int
+c.int3
+```
+
+**P-value:**  
+```{r}
+pval3 <- htest3$p.value
+pval3
+```
+
+Since P-value is much greater than the significant level of 0.05, we cannot reject the null hypothesis. The confidence interval does include 0 that it is significant there the two supplements at dosage of 2.0 mg/day have no different effect on tooth growth.
+
+
+ <br> 
+
+# Conclusion & Assumptions:
+
+#### **Assumptions: **  
+- The length of the tooth is normally distributed.
+- There are no other factors that affect the length of the tooth.
+
+  
+Oj has a greater effect on tooth growth at dosage of 0.5 mg/day and 1.0 mg/day. However, at dosage of 2.0 mg/day, the two supplements does not show difference in tooth growth. Overall, without the dosage level, the supplements cannot be determined to be a better source for tooth growth.
+
+
+
+
+
